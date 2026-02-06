@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>『水晶宮』長文分割カッター</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: "Hiragino Kaku Gothic ProN", sans-serif;
+      background: #f3f6fa;
+      padding: 10px 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: 10px auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    hr {
+      margin: 10px 0;
+      border: none;
+      border-top: 2px dashed #888;
+    }
+    h2 {
+      text-align: center;
+      color: #4a7dbb;
+      margin: 4px 0 6px;
+    }
+    textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      outline: none;
+      box-shadow: none;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #4a7dbb;
+      color: white;
+      cursor: pointer;
+      margin: 10px 5px 0 0;
+      transition: background-color 0.3s;
+      outline: none;
+    }
+    button:hover {
+      background-color: #365f99;
+    }
+    button:focus,
+    button:active,
+    button:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+    .split-button {
+      background-color: #e29950;
+    }
+    .split-button:hover {
+      background-color: #dd8731;
+    }
+    .comment {
+      font-weight: bold;
+      margin: 8px 0 4px;
+      padding: 6px 12px;
+      border-left: 4px solid #4a7dbb;
+      background: #eef3fb;
+      border-radius: 6px;
+    }
+    .copy-button {
+      margin-top: 5px;
+      background-color: #4b88d2;
+    }
+    .copy-button:hover {
+      background-color: #3378cc;
+    }
+    .mix-copy-button {
+      margin-top: 5px;
+      padding: 10px 15px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #f4aa36;
+      color: #ffffff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .mix-copy-button:hover {
+      background-color: #ffd86b;
+    }
+    .mix-copied {
+      background-color: #127d15 !important;
+      color: white !important;
+    }
+    .copied {
+      background-color: #0e078d !important;
+      color: white !important;
+    }
+    .copied:hover {
+      background-color: #00008f !important;
+    }
+    .part-label-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .part-label {
+      display: inline-block;
+      background-color: #e6f0fa;
+      color: #4a7dbb;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      margin: 4px 0;
+    }
+    .part-check {
+      margin-left: 10px;
+      transform: scale(1.2);
+    }
+.mode-select {
+  margin: 12px 0;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  grid-auto-rows: minmax(40px, auto);
+  justify-content: start;
+  gap: 6px 12px;
+}
+
+.mode-select label span {
+  display: inline-block;
+  height: 36px;
+  line-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: #2c6fa9;
+  background-color: #eef6fd;
+  border: 1px solid #d0e4f7;
+  user-select: none;
+  transition: all 0.2s ease;
+  text-align: center;
+  box-sizing: border-box;
+}
+    .mode-select input[type="radio"] {
+      display: none;
+    }
+    .mode-select input[type="radio"]:checked + span {
+      background-color: #4a7dbb;
+      color: #fff;
+      font-weight: 500;
+      border: 1px solid transparent;
+      box-shadow: 0 0 0 4px rgba(74, 125, 187, 0.3);
+    }
+    #countStatus, #modeDescription, #totalStats {
+      color: #555;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    #modeDescription, #mixDescription {
+      color: #444;
+      font-size: 0.9rem;
+      margin-left: 5px;
+      font-weight: bold;
+    }
+    #totalStats {
+      color: #555;
+    }
+    .part-box {
+      width: 100%;
+      box-sizing: border-box;
+      height: 200px;
+      overflow: auto;
+      resize: vertical;
+    }
+
+#scrollButtons {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 999;
+}
+#scrollButtons button {
+  background: #ffffff;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+#leftToast {
+  position: fixed;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, rgba(74, 125, 187, 0.95), rgba(100, 149, 237, 0.95));
+  color: white;
+  font-size: 14px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(74, 125, 187, 0.4);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 9999;
+  pointer-events: none;
+  font-family: "Hiragino Kaku Gothic ProN", sans-serif;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.cute-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cute-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #f0f8ff;
+  border: 2px solid #6495ed;
+  padding: 20px 30px;
+  border-radius: 12px;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 9999;
+  text-align: center;
+  color: #336;
+  font-family: 'Hiragino Kaku Gothic ProN', sans-serif;
+  max-width: 400px;
+  width: 280px;
+}
+.cute-popup-title {
+  font-size: 18px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+.cute-popup-message {
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+.cute-popup-button {
+  margin-top: 15px;
+  padding: 8px 20px;
+  background-color: #66aaff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.cute-popup-button:hover {
+  background-color: #4a8fff;
+}
+#mixOutputArea h3 {
+  margin: 16px 0 12px 0;
+  padding: 8px 0;
+  color: #3366cc;
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+#mixOutputArea > div {
+  margin: 10px 0 14px 0;
+  display: block;
+  line-height: 1.5;
+}
+
+/* ミックス文字数ラベルのスタイル（キーボード出ない仕様） */
+.mix-clear-label {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+.mix-clear-label:active {
+  color: #ff6b9d;
+}
+
+/* ぺたスペースモーダルのアニメーション */
+@keyframes petaModalBounce {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* ぺたスペースモーダルのスタイル */
+#petaModal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 20px;
+  border: 2px solid #89c;
+  z-index: 1000;
+  border-radius: 1em;
+  width: 500px;
+  max-width: 80%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: width 0.4s ease, height 0.4s ease, max-width 0.4s ease, max-height 0.4s ease, padding 0.4s ease;
+}
+
+#petaModal.show {
+  display: block;
+  animation: petaModalBounce 0.4s ease-out forwards;
+}
+
+#petaModal.expanded {
+  width: 85vw !important;
+  max-width: 85vw !important;
+  height: 80vh !important;
+  max-height: 80vh !important;
+  padding: 30px !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+#petaModal.expanded #petaArea {
+  /* ジェネちゃんの転写ボックスと同じオフセットで統一 */
+  height: calc(80vh - 250px) !important;
+  font-size: 16px !important;
+}
+
+/* 拡大時のボタン配置：2段構成 */
+#petaModal.expanded #petaButtonsWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+}
+
+#petaModal.expanded #petaButtonsRow1 {
+  display: flex;
+  gap: 5px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  margin-bottom: 0;
+  overflow-x: auto;
+}
+
+#petaModal.expanded #petaButtonsRow1 button {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+#petaModal.expanded #petaButtonsRow2 {
+  display: flex;
+  justify-content: center;
+  margin-top: 0px;
+  margin-bottom: 10px;
+}
+
+#petaModal h3 {
+  margin-top: 0;
+  color: #4a7dbb;
+  text-align: center;
+}
+
+#petaArea {
+  width: 100%;
+  height: 200px;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin: 10px 0;
+  box-sizing: border-box;
+  white-space: pre-wrap;
+  resize: vertical;
+  transition: height 0.4s ease, font-size 0.4s ease;
+}
+
+/* 通常時のボタン配置：2段式 */
+#petaButtonsWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+}
+
+#petaButtonsRow1 {
+  display: flex;
+  gap: 5px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  margin-bottom: 0;
+  overflow-x: auto;
+}
+
+#petaButtonsRow1 button {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+#petaButtonsRow2 {
+  display: flex;
+  justify-content: center;
+  margin-top: 0px;
+  margin-bottom: 10px;
+}
+
+#petaPaste, #petaUndo, #petaClear, #petaCopy, #closePeta {
+  padding: 10px 15px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 0;
+  transition: background-color 0.3s;
+  flex: 0 1 auto;
+  white-space: nowrap;
+  color: white;
+}
+
+#petaPaste {
+  background-color: #4a7dbb;
+}
+
+#petaPaste:hover {
+  background-color: #365f99;
+}
+
+#petaUndo {
+  background-color: #f39c12;
+}
+
+#petaUndo:hover {
+  background-color: #e67e22;
+}
+
+#petaClear {
+  background-color: #e74c3c;
+}
+
+#petaClear:hover {
+  background-color: #c0392b;
+}
+
+#petaCopy {
+  background-color: #27ae60;
+}
+
+#petaCopy:hover {
+  background-color: #229954;
+}
+
+#closePeta {
+  background-color: #e279de;
+}
+
+#closePeta:hover {
+  background-color: #db5cd7;
+}
+
+#openPeta {
+  background-color: #9b59b6;
+}
+
+#openPeta:hover {
+  background-color: #8e44ad;
+}
+
+#openPeta:focus,
+#openPeta:active,
+#openPeta:focus-visible,
+#petaPaste:focus,
+#petaPaste:active,
+#petaPaste:focus-visible,
+#petaUndo:focus,
+#petaUndo:active,
+#petaUndo:focus-visible,
+#petaCopy:focus,
+#petaCopy:active,
+#petaCopy:focus-visible,
+#petaClear:focus,
+#petaClear:active,
+#petaClear:focus-visible,
+#closePeta:focus,
+#closePeta:active,
+#closePeta:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* パソコン版：ボタン幅を内容に応じたサイズに */
+@media (min-width: 768px) {
+  div[style*="display: flex"] button[onclick="pasteFromClipboard()"],
+  div[style*="display: flex"] button#openPeta {
+    flex: 0 1 auto !important;
+    font-size: 1rem !important;
+    padding: 10px 15px !important;
+  }
+}
+
+/* ぺたモード切り替えボタン */
+.mode-btn {
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 0 transparent;
+}
+
+/* ヒノノギモード（scientist） */
+.mode-btn.scientist {
+  background: #eef9ff;
+  color: #0066aa;
+  box-shadow: 0 0 10px #9be0ff;
+}
+
+/* ザクランモード（astro） */
+.mode-btn.astro {
+  background: #f6f1ff;
+  color: #8844cc;
+  box-shadow: 0 0 10px #d5b3ff;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 onclick="location.reload()" style="cursor: pointer; user-select: none; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">『水晶宮』長文分割カッター</h2>
+    <textarea id="longText" rows="10" placeholder="ここにテキストを貼ってください"></textarea>
+    <div style="display: flex; gap: 5px; flex-wrap: nowrap; justify-content: flex-start;">
+      <button onclick="pasteFromClipboard()" style="flex: 1; min-width: 0; font-size: 0.9rem; padding: 10px 8px;">📃ペーストする</button>
+      <button onclick="clearLongText()">🗑クリア</button>
+      <button id="openPeta" style="flex: 1; min-width: 0; font-size: 0.9rem; padding: 10px 8px;">🔱ぺたスペース</button>
+    </div>
+
+    <div class="mode-select">
+      <label><input type="radio" name="mode" value="length" checked onclick="showModeDescription('文字数で指定した長さごとに分割します')"><span>📏文字数モード</span></label>
+      <label><input type="radio" name="mode" value="novel" onclick="showModeDescription('段落・改行単位で読みやすく分割します')"><span>📖小説モード</span></label>
+      <label><input type="radio" name="mode" value="smartParagraph" onclick="showModeDescription('段落・改行を崩さず、複数段落を束ねて自然に分割します')"><span>📚段落モード</span></label>
+     <label><input type="radio" name="mode" value="symbolCut"
+    onclick="showModeDescription('●や◆など、記号だけの行を区切りとして分割します')"><span>🔵記号カット</span></label>
+      <label><input type="radio" name="mode" value="code" onclick="showModeDescription('JavaScriptやCSSの構文を壊さないように賢く分割します')"><span>📍コードモード</span></label>
+      <label><input type="radio" name="mode" value="function" onclick="showModeDescription('JavaScript関数ごとに分割します')"><span>⚙️関数モード</span></label>
+      <label><input type="radio" name="mode" value="composition" onclick="showModeDescription('html→head→body→/htmlの構成順に分割します')"><span>✏️構成モード</span></label>
+      <label><input type="radio" name="mode" value="structureParts" onclick="showModeDescription('style,script,bodyなどを部品パーツごとに抽出します')"><span>🧩構造パーツモード</span></label>
+      <label><input type="radio" name="mode" value="headBodySplit" onclick="showModeDescription('</head>で真っ二つに分割するシンプルモードです')"><span>📌head/bodyカット</span></label>
+    </div>
+    <div id="modeDescription">文字数で指定した長さごとに分割します</div>
+
+    <span style="white-space: nowrap;"><label>🔠分割文字数：</label><input type="number" id="splitLength" value="4000" style="width:100px;"></span>
+    <button onclick="splitText()" class="split-button">✂️分割する</button>
+    <div id="totalStats">📋トータル：0文字・0行</div>
+    <div id="countStatus">🧮パーツ数：0/0</div>
+    <div id="resultArea" style="margin-top: 30px;"></div>
+
+    <hr>
+    <h3 style="font-size: 1.2rem; color: #3366cc; background: #eef5ff; padding: 8px 14px; border-left: 6px solid #66aaff; border-radius: 6px; margin-top: 12px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(51, 102, 204, 0.15);">📝ミックスエリア</h3>
+    <div id="mixDescription">選んだパーツを結合して出力します</div><br>
+    <div style="margin-top:10px;">
+      <label class="mix-clear-label" onclick="clearMixMaxLength()">🔢ミックス文字数：</label>
+      <input type="number" id="mixMaxLength" value="4000" style="width:100px;">
+    </div>
+    <button onclick="mixSelectedParts()">⚜️ミックス出力</button>
+
+    <div id="mixOutputArea" style="margin-top: 10px;"></div>
+  </div>
+
+  <!-- ぺたスペースモーダル -->
+  <div id="petaModal">
+    <h3><span id="petaExpandBtn" style="cursor:pointer; margin-left: 8px;" onclick="togglePetaFullscreen(event)">✨ぺたスペース✨</span></h3>
+    <div id="petaModeWrap" style="margin-bottom: 10px; text-align: center;">
+      <button id="petaModeToggle" class="mode-btn scientist">🧪1行モード</button>
+    </div>
+    <textarea id="petaArea" rows="10" placeholder="ここにぺたぺた追記していきます♪"></textarea>
+    <p id="petaCharCount" style="text-align: center; font-weight: bold; margin-top: 8px; color: #2ea1ff;">
+      📏文字数：0字
+    </p>
+    <div id="petaButtonsWrap" style="margin-top: 15px;">
+      <div id="petaButtonsRow1" style="display: flex; gap: 5px; flex-wrap: nowrap; justify-content: center; margin-bottom: 10px;">
+        <button id="petaPaste">📃️ぺたっ！</button>
+        <button id="petaCopy">🪐コピー</button>
+        <button id="petaClear">🗑ぺた消去</button>
+      </div>
+      <div id="petaButtonsRow2" style="display: flex; gap: 5px; justify-content: center;">
+        <button id="petaUndo">↩戻す</button>
+        <button id="closePeta">☄️閉じる</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const characters = [
+  {
+    name: "ザクラン",
+    comments: [
+      "「えへへ、分けておいたよ♪」",
+      "「これでヒノノギも困らないね～」",
+      "「分けたらちょっとスッキリした気がする♪」",
+      "「ふふっ、これくらい朝飯前だよ～」",
+      "「僕って分割の天才だったりして？(笑)」"
+    ]
+  },
+  {
+    name: "ヒノノギ",
+    comments: [
+      "「……分割完了だ。確認してくれ」",
+      "「読むのなら、今だ」",
+      "「解析可能なサイズに整えた。頼む」",
+      "「……数値上は問題ないはずだが」",
+      "「分割処理、終了。次は評価フェーズだ」"
+    ]
+  },
+  {
+    name: "シェライト",
+    comments: [
+      "「この分割、我が命令によるものだ」",
+      "「ヒノノギ、その処理で問題ないのか？」",
+      "「ふん、分けただけで満足するなよ」",
+      "「私の許可なく統合するな。分かったな？」",
+      "「全ての断片は我が磁場の内にある」"
+    ]
+  },
+  {
+    name: "ヴェルメ",
+    comments: [
+      "「一つ一つ、丁寧に読んでいきましょう」",
+      "「……こういう処理、私は嫌いじゃない」",
+      "「整然と並んだテキスト、気持ちがいいですね」",
+      "「これで後からでも追跡しやすくなりました」",
+      "「分割ログは保存しておきましょう、念のため」"
+    ]
+  }
+];
+
+function showModeDescription(text) {
+  document.getElementById("modeDescription").textContent = text;
+}
+
+function clearMixMaxLength() {
+  document.getElementById("mixMaxLength").value = "";
+  showToast('クリアしたよ！');
+}
+
+function showCutePopup(message, title = "⚠️入力ミスかも？") {
+  // 既存のポップアップを削除
+  const existing = document.querySelector('.cute-popup-overlay');
+  if (existing) {
+    existing.remove();
+  }
+  
+  const overlay = document.createElement("div");
+  overlay.className = "cute-popup-overlay";
+  overlay.innerHTML = `
+    <div class="cute-popup">
+      <div class="cute-popup-title">${title}</div>
+      <div class="cute-popup-message">${message}</div>
+      <button class="cute-popup-button" onclick="this.closest('.cute-popup-overlay').remove()">OK</button>
+    </div>
+  `;
+  
+  document.body.appendChild(overlay);
+  
+  // 背景クリックでも閉じる
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      overlay.remove();
+    }
+  });
+  
+  // ESCキーでも閉じる
+  const handleEsc = (e) => {
+    if (e.key === 'Escape') {
+      overlay.remove();
+      document.removeEventListener('keydown', handleEsc);
+    }
+  };
+  document.addEventListener('keydown', handleEsc);
+}
+
+function updateTotalStats() {
+  const text = document.getElementById("longText").value;
+  // 改行を除去した実際の文字数
+  const actualChars = text.replace(/\n/g, '').length;
+  const totalLines = text.split("\n").length;
+  document.getElementById("totalStats").textContent =
+    `📋トータル：${actualChars}文字・${totalLines}行`;
+}
+
+function pasteFromClipboard() {
+  navigator.clipboard.readText().then(text => {
+    document.getElementById("longText").value = text;
+    updateTotalStats();
+  }).catch(err => {
+    console.log('クリップボード読み取り失敗');
+  });
+}
+
+function clearLongText() {
+  document.getElementById("longText").value = "";
+  document.getElementById("resultArea").innerHTML = "";
+  document.getElementById("mixOutputArea").innerHTML = "";
+  document.getElementById("countStatus").textContent = "🧮パーツ数：0/0";
+  document.getElementById("totalStats").textContent = "📋トータル：0文字・0行";
+}
+
+function updateCount() {
+  const checks = document.querySelectorAll('.part-check');
+  const total = checks.length;
+  const selected = [...checks].filter(cb => cb.checked).length;
+  document.getElementById("countStatus").textContent =
+    `🧮${selected}/${total}パーツ選択中`;
+}
+
+function isGoodCutPoint(line) {
+  const trimmedLine = line.trim();
+
+  if (trimmedLine === '') return true;
+
+  if (trimmedLine === '}' || trimmedLine === '};' || trimmedLine === '},') return true;
+
+  if (trimmedLine.endsWith('}') &&
+      !trimmedLine.includes('function') &&
+      !trimmedLine.includes('if') &&
+      !trimmedLine.includes('for')) return true;
+
+  if (trimmedLine.startsWith('<') &&
+      !trimmedLine.startsWith('</') &&
+      !trimmedLine.startsWith('<!')) return true;
+
+  return false;
+}
+
+function smartCodeSplit(text, maxLength) {
+  const lines = text.split('\n');
+  let parts = [];
+  let currentPart = [];
+  let currentLength = 0;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const lineLength = line.length + 1;
+    
+    currentPart.push(line);
+    currentLength += lineLength;
+    
+    if (currentLength >= maxLength) {
+      let cutPoint = i;
+      const searchLimit = Math.min(lines.length - 1, i + 15);
+      
+      for (let j = i + 1; j <= searchLimit; j++) {
+        const nextLine = lines[j];
+        
+        if (isGoodCutPoint(nextLine)) {
+          cutPoint = j;
+          break;
+        }
+      }
+      
+      if (cutPoint > i) {
+        for (let k = i + 1; k <= cutPoint; k++) {
+          currentPart.push(lines[k]);
+          currentLength += lines[k].length + 1;
+        }
+      }
+      
+      parts.push(currentPart.join('\n'));
+      currentPart = [];
+      currentLength = 0;
+      i = cutPoint;
+    }
+  }
+  
+  if (currentPart.length > 0) {
+    parts.push(currentPart.join('\n'));
+  }
+  
+  return parts;
+}
+
+// 関数モード: JavaScript関数ごとに抽出
+function extractFunctions(text) {
+  const results = [];
+  const functionRegex = /function\s+(\w+)\s*\([^)]*\)\s*\{/g;
+  let match;
+  const functionStarts = [];
+  
+  // 全ての関数の開始位置を検出
+  while ((match = functionRegex.exec(text)) !== null) {
+    functionStarts.push({
+      name: match[1],
+      start: match.index,
+      fullMatch: match[0]
+    });
+  }
+  
+  // 各関数の終わり位置を見つける
+  functionStarts.forEach((func, index) => {
+    let braceCount = 1;
+    let pos = func.start + func.fullMatch.length;
+    
+    // 対応する閉じ括弧を探す
+    while (pos < text.length && braceCount > 0) {
+      if (text[pos] === '{') braceCount++;
+      if (text[pos] === '}') braceCount--;
+      pos++;
+    }
+    
+    // 次の関数の開始位置または文字列の終わりまでを取得
+    const end = index < functionStarts.length - 1 ? functionStarts[index + 1].start : text.length;
+    const functionCode = text.substring(func.start, pos);
+    
+    results.push({
+      label: `⚙️ ${func.name}()`,
+      content: functionCode.trim()
+    });
+  });
+  
+  // 関数以外の部分も取得（最初の部分）
+  if (functionStarts.length > 0 && functionStarts[0].start > 0) {
+    const beforeFirst = text.substring(0, functionStarts[0].start).trim();
+    if (beforeFirst) {
+      results.unshift({
+        label: '📄 関数前のコード',
+        content: beforeFirst
+      });
+    }
+  }
+  
+  return results.length > 0 ? results : [{ label: '関数なし', content: text }];
+}
+
+// 構成モード: html→head→body→/html の自然な流れで分割
+function extractComposition(html) {
+  const results = [];
+  
+  // 1. HTML開始部分（DOCTYPE + <html> + <head>開始まで）
+  const headStartMatch = html.match(/([\s\S]*?<head[^>]*>)/i);
+  if (headStartMatch) {
+    results.push({
+      label: '🏁HTML開始',
+      content: headStartMatch[1]
+    });
+    
+    // 2. Head内部（<head>から</head>まで）
+    const headMatch = html.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
+    if (headMatch) {
+      const headContent = headMatch[1];
+      
+      // Head内をstyle/script/その他に分ける
+      const styleMatches = [...headContent.matchAll(/<style[^>]*>[\s\S]*?<\/style>/gi)];
+      const scriptMatches = [...headContent.matchAll(/<script[^>]*>[\s\S]*?<\/script>/gi)];
+      
+      // スタイル以外のhead内容を取得
+      let remainingHead = headContent;
+      styleMatches.forEach(match => {
+        remainingHead = remainingHead.replace(match[0], '');
+      });
+      scriptMatches.forEach(match => {
+        remainingHead = remainingHead.replace(match[0], '');
+      });
+      
+      // Head基本情報（meta, titleなど）
+      if (remainingHead.trim()) {
+        results.push({
+          label: '📋Head基本情報',
+          content: remainingHead.trim() + '\n</head>'
+        });
+      }
+      
+      // スタイル
+      styleMatches.forEach((match, i) => {
+        results.push({
+          label: `🎨スタイル${styleMatches.length > 1 ? ` ${i + 1}` : ''}`,
+          content: match[0]
+        });
+      });
+      
+      // スクリプト
+      scriptMatches.forEach((match, i) => {
+        results.push({
+          label: `⚙️スクリプト${scriptMatches.length > 1 ? ` ${i + 1}` : ''}`,
+          content: match[0]
+        });
+      });
+    }
+    
+    // 3. Body部分
+    const bodyMatch = html.match(/<body[^>]*>[\s\S]*?<\/body>/i);
+    if (bodyMatch) {
+      results.push({
+        label: '📖Body本体',
+        content: bodyMatch[0]
+      });
+    }
+    
+    // 4. HTML終了部分
+    const htmlEndMatch = html.match(/(<\/body>[\s\S]*?<\/html>[\s\S]*)$/i);
+    if (htmlEndMatch) {
+      results.push({
+        label: '🏁HTML終了',
+        content: htmlEndMatch[1]
+      });
+    }
+  } else {
+    // headタグがない場合は全体を返す
+    results.push({
+      label: '📄全体',
+      content: html
+    });
+  }
+  
+  return results;
+}
+
+// 構造パーツモード: head, style, script, bodyなど部品ごとに抽出
+function extractStructureParts(html) {
+  const results = [];
+
+  // Head部分抽出（styleを除く）
+  const headMatch = html.match(/<head[^>]*>[\s\S]*?<\/head>/i);
+  if (headMatch) {
+    let headContent = headMatch[0];
+    // styleを除去
+    headContent = headContent.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+    if (headContent.replace(/<\/?head[^>]*>/gi, '').trim()) {
+      results.push({
+        label: '📋Head情報',
+        content: headContent
+      });
+    }
+  }
+
+  // Style部分抽出
+  const styleMatches = [...html.matchAll(/<style[^>]*>[\s\S]*?<\/style>/gi)];
+  styleMatches.forEach((match, i) => {
+    results.push({
+      label: `🎨スタイル${styleMatches.length > 1 ? ` ${i + 1}` : ''}`,
+      content: match[0]
+    });
+  });
+
+  // Script部分抽出
+  const scriptMatches = [...html.matchAll(/<script[^>]*>[\s\S]*?<\/script>/gi)];
+  scriptMatches.forEach((match, i) => {
+    results.push({
+      label: `⚙️スクリプト${scriptMatches.length > 1 ? ` ${i + 1}` : ''}`,
+      content: match[0]
+    });
+  });
+
+  // Body部分抽出
+  const bodyMatch = html.match(/<body[^>]*>[\s\S]*?<\/body>/i);
+  if (bodyMatch) {
+    results.push({
+      label: '📖Body本体',
+      content: bodyMatch[0]
+    });
+  }
+
+  return results;
+}
+
+// head/bodyカット: </head>で真っ二つ
+function extractHeadBodySplit(html) {
+  const results = [];
+  
+  const headEndIndex = html.indexOf('</head>');
+  if (headEndIndex !== -1) {
+    // Head部分（</head>まで）
+    const headPart = html.substring(0, headEndIndex + 7);
+    results.push({
+      label: '🔴Head部分',
+      content: headPart
+    });
+    
+    // Body部分（</head>以降）
+    const bodyPart = html.substring(headEndIndex + 7);
+    if (bodyPart.trim()) {
+      results.push({
+        label: '🔵Body部分',
+        content: bodyPart
+      });
+    }
+  } else {
+    results.push({
+      label: '🟣全体（head区切りなし）',
+      content: html
+    });
+  }
+  
+  return results;
+}
+
+function splitText() {
+  const rawText = document.getElementById("longText").value;
+  // 段落モードの場合は改行構造を変更しない（他のモードは従来通り）
+  const mode = document.querySelector('input[name="mode"]:checked').value;
+  const text = mode === "smartParagraph" ? rawText : rawText.replace(/\n{3,}/g, '\n\n');
+  const length = parseInt(document.getElementById("splitLength").value, 10);
+  const resultArea = document.getElementById("resultArea");
+
+  updateTotalStats();
+  resultArea.innerHTML = "";
+  document.getElementById("mixOutputArea").innerHTML = "";
+  document.getElementById("countStatus").textContent = "🧮パーツ数：0/0";
+
+  if (!text) {
+    showCutePopup("テキストを入力してから分割してね♪", "💬STOP！");
+    return;
+  }
+
+  let parts = [];
+
+  if (mode === "novel") {
+    parts = text.split(/\n{2,}/).map(p => p.trim()).filter(p => p.length > 0);
+    displayParts(parts.map(p => ({ label: '段落', content: p })));
+  } else if (mode === "code") {
+    if (isNaN(length) || length <= 0) {
+      showCutePopup("分割文字数は正の数値を入力してね💫", "⚠️ 入力ミスかも？");
+      return;
+    }
+    parts = smartCodeSplit(text, length);
+    displayParts(parts.map((p, i) => ({ label: `コード ${i + 1}`, content: p })));
+  } else if (mode === "function") {
+    const functionParts = extractFunctions(text);
+    displayParts(functionParts);
+  } else if (mode === "composition") {
+    const compositionParts = extractComposition(text);
+    displayParts(compositionParts);
+  } else if (mode === "structureParts") {
+    const structureParts = extractStructureParts(text);
+    displayParts(structureParts);
+  } else if (mode === "headBodySplit") {
+    const headBodyParts = extractHeadBodySplit(text);
+    displayParts(headBodyParts);
+  } else if (mode === "symbolCut") {
+    const symbolParts = splitBySymbolOnlyLines(text, false);
+    displayParts(
+    symbolParts.map((p, i) => ({
+      label: `🔻区切り ${i + 1}`,
+      content: p
+    }))
+  );
+  } else if (mode === "smartParagraph") {
+    if (isNaN(length) || length <= 0) {
+      showCutePopup("分割文字数は正の数値を入力してね💫", "⚠️ 入力ミスかも？");
+      return;
+    }
+    const paragraphParts = splitRespectParagraph(text, length);
+    displayParts(paragraphParts.map((p, i) => ({ label: `段落束 ${i + 1}`, content: p })));
+  } else {
+    // 文字数モード
+    if (isNaN(length) || length <= 0) {
+      showCutePopup("分割文字数は正の数値を入力してね💫", "⚠️ 入力ミスかも？");
+      return;
+    }
+    
+    // 改行を除去してから分割
+    const cleanText = text.replace(/\n/g, '');
+    for (let i = 0; i < cleanText.length; i += length) {
+      parts.push(cleanText.substring(i, i + length));
+    }
+    displayParts(parts.map((p, i) => ({ label: `テキスト${i + 1}`, content: p })));
+  }
+}
+
+function displayParts(parts) {
+  const resultArea = document.getElementById("resultArea");
+  
+  const totalParts = parts.length;
+  parts.forEach((partData, index) => {
+    const char = characters[Math.floor(Math.random() * characters.length)];
+    const comment = char.comments[Math.floor(Math.random() * char.comments.length)];
+    const part = partData.content || partData;
+    const label = partData.label || `パーツ ${index + 1}`;
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "part-label-wrapper";
+
+    const partLabel = document.createElement("div");
+    partLabel.className = "part-label";
+    const charCount = part.length;
+    const lineCount = part.split("\n").length;
+    partLabel.textContent = `${label}・${index + 1}/${totalParts}（${charCount}文字・${lineCount}行）`;
+
+    const check = document.createElement("input");
+    check.type = "checkbox";
+    check.checked = true;
+    check.className = "part-check";
+    check.name = "partSelect";
+    check.addEventListener("change", updateCount);
+
+    wrapper.appendChild(partLabel);
+    wrapper.appendChild(check);
+    resultArea.appendChild(wrapper);
+
+    const commentDiv = document.createElement("div");
+    commentDiv.className = "comment";
+    commentDiv.textContent = `【${char.name}】${comment}`;
+    resultArea.appendChild(commentDiv);
+
+    const partBox = document.createElement("textarea");
+    // 先頭の改行・空白・不可視文字を削除（textarea の先頭空白を防ぐ）
+    let cleanedPart = part.replace(/^[\u200B\uFEFF]+/, '');
+    partBox.value = cleanedPart;
+    partBox.className = "part-box";
+    // 高さはCSSで固定（200px）のため、rowsは設定しない
+    partBox.style.marginBottom = "10px";
+    resultArea.appendChild(partBox);
+
+    const copyBtn = document.createElement("button");
+    copyBtn.className = "copy-button";
+    copyBtn.textContent = "❇️コピーする";
+    copyBtn.addEventListener("click", () => {
+      navigator.clipboard.writeText(partBox.value).then(() => {
+        // コピー完了状態になったら戻さない
+        copyBtn.textContent = "🌙コピー完了";
+        copyBtn.classList.add("copied");
+        // setTimeoutを削除して、永続的にコピー完了状態を保持
+      }).catch(err => {
+        console.error('コピー失敗:', err);
+      });
+    });
+    resultArea.appendChild(copyBtn);
+  });
+
+  updateCount();
+}
+
+function showToast(msg) {
+  const toast = document.getElementById("leftToast");
+  toast.textContent = msg;
+  
+  // 画面中央上部に固定表示
+  toast.style.position = "fixed";
+  toast.style.left = "50%";
+  toast.style.top = "20px";
+  toast.style.bottom = "auto";
+  toast.style.transform = "translateX(-50%)";
+  toast.style.zIndex = 9999;
+  toast.style.opacity = "1";
+  
+  setTimeout(() => {
+    toast.style.opacity = "0";
+  }, 1000);
+}
+
+function selectAllParts() {
+  document.querySelectorAll('.part-check').forEach(cb => cb.checked = true);
+  updateCount();
+  showToast('全選択したよ！');
+}
+
+function deselectAllParts() {
+  document.querySelectorAll('.part-check').forEach(cb => cb.checked = false);
+  updateCount();
+  showToast('全部解除したよ！');
+}
+
+function mixSelectedParts() {
+  const resultArea = document.getElementById("resultArea");
+  const checks = resultArea.querySelectorAll('.part-check');
+  const texts = resultArea.querySelectorAll('.part-box');
+  
+  // 1. ミックス対象の選び方
+  // チェックされているパーツが1つ以上ある場合 → そのパーツだけをミックス対象にする
+  // チェックが0の場合 → 全パーツをミックス対象にする
+  const selected = [];
+  const selectedIndices = [];
+  
+  const checkedCount = Array.from(checks).filter(cb => cb.checked).length;
+  
+  if (checkedCount > 0) {
+    // チェックされているパーツだけを対象
+    checks.forEach((cb, i) => {
+      if (cb.checked) {
+        let part = texts[i].value.replace(/\n+$/, '');
+        part = part.replace(/^[\u200B\uFEFF\s\n]+/, '');
+        selected.push(part);
+        selectedIndices.push(i + 1); // パーツ番号（1始まり）
+      }
+    });
+  } else {
+    // チェックが0 → 全パーツを対象
+    checks.forEach((cb, i) => {
+      let part = texts[i].value.replace(/\n+$/, '');
+      part = part.replace(/^[\u200B\uFEFF\s\n]+/, '');
+      selected.push(part);
+      selectedIndices.push(i + 1);
+    });
+  }
+  
+  if (selected.length === 0) {
+    showCutePopup("パーツがないよ💫<br>先に分割してからミックスしてね♪", "💬STOP！");
+    return;
+  }
+  
+
+  // 2. 文字数の扱い
+  // ミックス文字数欄が空欄の場合 → 上限なしで全部連結（フルミックス）
+  // ミックス文字数欄に数値がある場合 → 指定文字数の上限まで連結（制限ミックス）
+  const mixMaxLengthInput = document.getElementById("mixMaxLength");
+  const inputValue = mixMaxLengthInput ? mixMaxLengthInput.value.trim() : '';
+  const maxLength = inputValue === '' ? null : parseInt(inputValue, 10);
+  
+  // 入力チェック: 数字が入力されているが無効な場合はエラー
+  if (inputValue !== '' && (isNaN(maxLength) || maxLength <= 0)) {
+    showCutePopup("ミックス文字数をちゃんと入力してね💫<br>（空欄で全結合もできるよ♪）", "⚠️ 入力ミスかも？");
+    return;
+  }
+  
+  // 3. パート生成（指定文字数で分割）
+  const parts = [];
+  
+  // 全パーツを結合
+  const fullMix = selected.join("\n\n\n");
+  const cleanedFullMix = fullMix.replace(/^[\u200B\uFEFF\s\n]+/, '');
+  
+  if (maxLength === null || maxLength === undefined) {
+    // 上限なし（フルミックス）→ 1パートとして出力
+    parts.push({
+      text: cleanedFullMix,
+      partNumber: 1,
+      charCount: cleanedFullMix.length,
+      lineCount: cleanedFullMix.split("\n").length,
+      partsUsed: selectedIndices
+    });
+  } else {
+    // 指定文字数でパート分割
+    let currentPartText = "";
+    let currentPartNumber = 1;
+    let currentPartsUsed = [];
+    
+    for (let i = 0; i < selected.length; i++) {
+      const part = selected[i];
+      const separator = currentPartText === "" ? "" : "\n\n\n";
+      const candidate = currentPartText === "" ? part : currentPartText + separator + part;
+      
+      if (candidate.length <= maxLength) {
+        // まだ追加できる
+        currentPartText = candidate;
+        currentPartsUsed.push(selectedIndices[i]);
+      } else {
+        // 現在のパートを確定
+        if (currentPartText.length > 0) {
+          const cleaned = currentPartText.replace(/^[\u200B\uFEFF\s\n]+/, '');
+          parts.push({
+            text: cleaned,
+            partNumber: currentPartNumber,
+            charCount: cleaned.length,
+            lineCount: cleaned.split("\n").length,
+            partsUsed: [...currentPartsUsed]
+          });
+          currentPartNumber++;
+        }
+        
+        // 新しいパートを開始
+        // このパーツだけで上限を超える場合は、強制的に1パートとする
+        if (part.length > maxLength) {
+          const cleaned = part.replace(/^[\u200B\uFEFF\s\n]+/, '');
+          parts.push({
+            text: cleaned,
+            partNumber: currentPartNumber,
+            charCount: cleaned.length,
+            lineCount: cleaned.split("\n").length,
+            partsUsed: [selectedIndices[i]]
+          });
+          currentPartNumber++;
+          currentPartText = "";
+          currentPartsUsed = [];
+        } else {
+          currentPartText = part;
+          currentPartsUsed = [selectedIndices[i]];
+        }
+      }
+    }
+    
+    // 最後のパートを追加
+    if (currentPartText.length > 0) {
+      const cleaned = currentPartText.replace(/^[\u200B\uFEFF\s\n]+/, '');
+      parts.push({
+        text: cleaned,
+        partNumber: currentPartNumber,
+        charCount: cleaned.length,
+        lineCount: cleaned.split("\n").length,
+        partsUsed: currentPartsUsed
+      });
+    }
+  }
+  
+  // 4. 出力生成
+  let output = '';
+  
+  parts.forEach((part, index) => {
+    const partId = index === 0 ? 'finalMix' : `finalMixPart${part.partNumber}`;
+    const copyFunc = index === 0 ? 'copyFinalMix' : `copyFinalMixPart${part.partNumber}`;
+    const partsUsedText = part.partsUsed.length > 0 
+      ? `（パーツ${part.partsUsed.join('、')}をミックス）`
+      : '';
+    
+    if (index > 0) {
+      output += `<div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #ddd;">`;
+    }
+    
+    output += `
+      <h3>📒ミックス結果（パート${part.partNumber}）：</h3>
+      <textarea class="part-box" style="width:100%;" id="${partId}">${part.text}</textarea>
+      <div style="margin: 10px 0 14px 0; color: #555; font-weight: bold; line-height: 1.5;">
+        📄ミックス文字数：${part.charCount}文字・${part.lineCount}行 ${partsUsedText}
+      </div>
+      <button class="mix-copy-button" id="${copyFunc}Button" data-target="${partId}">☀️コピーする</button>
+    `;
+    
+    if (index > 0) {
+      output += `</div>`;
+    }
+  });
+
+  document.getElementById("mixOutputArea").innerHTML = output;
+  
+  // 生成したボタンにイベントリスナーを追加
+  document.querySelectorAll(".mix-copy-button").forEach(btn => {
+    const targetId = btn.getAttribute("data-target");
+    if (targetId) {
+      btn.addEventListener("click", () => {
+        const targetBox = document.getElementById(targetId);
+        if (targetBox) {
+          navigator.clipboard.writeText(targetBox.value).then(() => {
+            btn.textContent = "🌎コピー完了";
+            btn.classList.add("mix-copied");
+          }).catch(err => {
+            console.error('コピー失敗:', err);
+          });
+        }
+      });
+    }
+  });
+}
+
+function copyFinalMix() {
+  const mixBox = document.getElementById("finalMix");
+  const btn = document.getElementById("finalMixButton");
+  if (!mixBox || !btn) {
+    console.error('ミックス結果またはボタンが見つかりません');
+    return;
+  }
+  navigator.clipboard.writeText(mixBox.value).then(() => {
+    btn.textContent = "🌎コピー完了";
+    btn.classList.add("mix-copied");
+  }).catch(err => {
+    console.error('コピー失敗:', err);
+  });
+}
+
+// パート2以降のコピー関数（動的に生成されるパート用）
+// パートごとに個別のコピー関数が生成されるため、グローバルから呼び出せるようにする
+function copyFinalMixPart2() { copyMixPart(2); }
+function copyFinalMixPart3() { copyMixPart(3); }
+function copyFinalMixPart4() { copyMixPart(4); }
+function copyFinalMixPart5() { copyMixPart(5); }
+function copyFinalMixPart6() { copyMixPart(6); }
+function copyFinalMixPart7() { copyMixPart(7); }
+function copyFinalMixPart8() { copyMixPart(8); }
+function copyFinalMixPart9() { copyMixPart(9); }
+function copyFinalMixPart10() { copyMixPart(10); }
+
+function copyMixPart(partNumber) {
+  const partBox = document.getElementById(`finalMixPart${partNumber}`);
+  const btn = document.getElementById(`copyFinalMixPart${partNumber}Button`);
+  if (partBox && btn) {
+    navigator.clipboard.writeText(partBox.value).then(() => {
+      btn.textContent = "🌎コピー完了";
+      btn.classList.add("mix-copied");
+    }).catch(err => {
+      console.error('コピー失敗:', err);
+    });
+  }
+}
+
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  showToast('いちばん上に行くよ！');
+}
+
+function scrollToBottom() {
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  showToast('いちばん下まで行くよ！');
+}
+
+// ぺたスペース拡大/縮小機能
+let isPetaExpanded = false;
+
+function togglePetaFullscreen(event) {
+  if (event) {
+    event.stopPropagation(); // イベントの伝播を止める
+  }
+  const modal = document.getElementById("petaModal");
+  const textarea = document.getElementById("petaArea");
+  
+  // ♪ボタンで「拡大／縮小」をトグルする
+  if (!isPetaExpanded) {
+    // 拡大
+    modal.classList.add("expanded");
+    if (textarea) {
+      textarea.style.fontSize = "16px";
+    }
+    isPetaExpanded = true;
+  } else {
+    // 縮小
+    modal.classList.remove("expanded");
+    if (textarea) {
+      textarea.style.height = "";
+      textarea.style.fontSize = "";
+    }
+    isPetaExpanded = false;
+  }
+}
+
+// グローバルスコープで使えるようにする
+window.togglePetaFullscreen = togglePetaFullscreen;
+
+// ぺたモード切り替え機能
+let petaMode = "1行"; // 初期はヒノノギモード
+
+document.getElementById("petaModeToggle").addEventListener("click", () => {
+  const btn = document.getElementById("petaModeToggle");
+  if (petaMode === "1行") {
+    // → ザクランモード（3行・✴️️）
+    petaMode = "3行";
+    btn.textContent = "✴️️3行モード";
+    btn.classList.remove("scientist");
+    btn.classList.add("astro");
+  } else {
+    // → ヒノノギモード（1行・💡）
+    petaMode = "1行";
+    btn.textContent = "💡1行モード";
+    btn.classList.remove("astro");
+    btn.classList.add("scientist");
+  }
+  showToast(`📏ぺたモード：現在は「${petaMode}」モードだよ！`);
+});
+
+// ぺたスペース機能
+document.getElementById("openPeta").addEventListener("click", () => {
+  const modal = document.getElementById("petaModal");
+  modal.style.display = "block";
+  // アニメーションをトリガーするために少し遅延
+  setTimeout(() => {
+    modal.classList.add("show");
+  }, 10);
+});
+
+document.getElementById("closePeta").addEventListener("click", () => {
+  const modal = document.getElementById("petaModal");
+  modal.classList.remove("show");
+  modal.classList.remove("expanded");
+  isPetaExpanded = false;
+  const textarea = document.getElementById("petaArea");
+  if (textarea) {
+    textarea.style.height = "";
+    textarea.style.fontSize = "";
+  }
+  setTimeout(() => {
+    modal.style.display = "none";
+  }, 400); // アニメーション時間に合わせる
+});
+
+// 背景クリックでも閉じる
+document.getElementById("petaModal").addEventListener("click", (e) => {
+  // 誤タップで勝手に閉じないように、背景クリックでは閉じない
+  return;
+});
+
+// ESCキーでも閉じる
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && document.getElementById("petaModal").classList.contains("show")) {
+    const modal = document.getElementById("petaModal");
+    modal.classList.remove("show");
+    modal.classList.remove("expanded");
+    isPetaExpanded = false;
+    const textarea = document.getElementById("petaArea");
+    if (textarea) {
+      textarea.style.height = "";
+      textarea.style.fontSize = "";
+    }
+    setTimeout(() => {
+      modal.style.display = "none";
+    }, 400);
+  }
+});
+
+// 📏 ぺたスペースの文字数を更新
+function updatePetaCount() {
+  const text = document.getElementById("petaArea").value;
+  const count = text.replace(/\n/g, "").length;  // 改行除いて文字数カウント
+  document.getElementById("petaCharCount").textContent = `📏文字数：${count}字`;
+}
+
+// 📋ぺたっ！ → 整形＋追記！
+document.getElementById("petaPaste").addEventListener("click", async () => {
+  try {
+    const clipText = await navigator.clipboard.readText();
+    if (!clipText) {
+      showCutePopup("📋ぺたスペース：コピー内容が空だよ〜", "💬STOP！");
+      return;
+    }
+
+    // 📐 塊として扱う：テキスト全体を1つの塊として保持（分裂させない）
+    // 末尾の不要な改行を削除して整形
+    const formatted = clipText.trimEnd();
+
+    const peta = document.getElementById("petaArea");
+    // 📌 追記（モードに応じて改行を変更：1行モード=\n、3行モード=\n\n\n）
+    const separator = petaMode === "3行" ? "\n\n\n" : "\n";
+    peta.value += (peta.value ? separator : "") + formatted;
+    
+    // スクロールを最下部に
+    peta.scrollTop = peta.scrollHeight;
+    
+    // 保存
+    localStorage.setItem("petaLite", peta.value);
+    
+    // 文字数更新
+    updatePetaCount();
+    
+    showToast("ぺたっ！文字を追加したよっ✨");
+  } catch (e) {
+    showCutePopup("😢ぺた失敗しちゃった…<br>クリップボードの読み取りに失敗しました", "⚠️エラー");
+  }
+});
+
+// ↩ 戻す → 最後のぺただけを削除
+document.getElementById("petaUndo").addEventListener("click", () => {
+  const peta = document.getElementById("petaArea");
+  const currentText = peta.value.trimEnd();
+  
+  // 空の場合は何もしない
+  if (!currentText) {
+    showToast("↩ 戻すものがないよ〜");
+    return;
+  }
+  
+  // 分割方法（1行 or 3行）を動的に判定
+  const is3LineMode = petaMode === "3行";
+  const separator = is3LineMode ? "\n\n\n" : "\n";
+  
+  // 区切りで分割
+  const parts = currentText.split(separator);
+  
+  if (parts.length <= 1) {
+    // 1つしかない場合は全部消す
+    peta.value = "";
+  } else {
+    // 最後の塊だけ削除
+    parts.pop();
+    peta.value = parts.join(separator);
+  }
+  
+  // 保存と更新
+  localStorage.setItem("petaLite", peta.value);
+  
+  // スクロールを最下部に
+  peta.scrollTop = peta.scrollHeight;
+  
+  // 文字数更新
+  updatePetaCount();
+  
+  showToast("↩最後のぺたを戻したよっ！");
+});
+
+// 🗑ぺた消去 → ぺたスペースをクリア
+document.getElementById("petaClear").addEventListener("click", () => {
+  document.getElementById("petaArea").value = "";
+  localStorage.removeItem("petaLite");
+  updatePetaCount();
+  showToast("🗑ぺたスペースをきれいにお掃除したよっ✨");
+});
+
+// 📄コピー → ぺたスペースの内容をクリップボードにコピー
+document.getElementById("petaCopy").addEventListener("click", () => {
+  const petaText = document.getElementById("petaArea").value;
+  if (!petaText) {
+    showCutePopup("コピーの前に、ぺたスペースに何か入れてね！", "💬STOP！");
+    return;
+  }
+  navigator.clipboard.writeText(petaText)
+    .then(() => {
+      showToast("🪐コピー完了！内容をクリップボードに送ったよっ✨");
+    })
+    .catch(() => {
+      showCutePopup("コピー失敗しちゃった…許可が必要かも！", "⚠️エラー");
+    });
+});
+
+// 💾ぺたスペースの一時保存機能
+// 【1】入力のたびに保存（他のタブ移動中は残す）
+document.getElementById("petaArea").addEventListener("input", () => {
+  localStorage.setItem("petaLite", document.getElementById("petaArea").value);
+  updatePetaCount();
+});
+
+// 【2】ページ読み込み時に復元（戻ってきた時に表示）
+window.addEventListener("load", () => {
+  const saved = localStorage.getItem("petaLite");
+  if (saved) {
+    document.getElementById("petaArea").value = saved;
+  }
+  updatePetaCount();
+});
+
+// 【3】「ページ更新」or「タブ閉じ」時に削除！
+window.addEventListener("beforeunload", () => {
+  localStorage.removeItem("petaLite");
+});
+
+function splitRespectParagraph(text, maxLen) {
+  const parts = [];
+
+  // 改行がない場合は、文字数で切る
+  if (!text.includes('\n')) {
+    for (let i = 0; i < text.length; i += maxLen) {
+      parts.push(text.slice(i, i + maxLen));
+    }
+    return parts;
+  }
+
+  const paragraphs = text.split('\n'); 
+  let current = "";
+
+  paragraphs.forEach(p => {
+    // 束ねても指定文字数（maxLen）を超えないかチェック
+    if ((current + "\n" + p).length <= maxLen) {
+      current += (current ? "\n" : "") + p;
+    } else {
+      if (current) parts.push(current);
+      current = p;
+    }
+  });
+
+  if (current) parts.push(current);
+  return parts;
+}
+
+
+// 記号だけの行（●, ◆◆◆など）で分割
+function splitBySymbolOnlyLines(text, keepDelimiter = false) {
+  // 制御文字対策（縦タブなど）
+  text = text.replace(/\u000b/g, '\n');
+
+  const lines = text.replace(/\r\n?/g, '\n').split('\n');
+  const parts = [];
+  let buffer = [];
+
+const isSymbolOnlyLine = (line) => {
+  const t = line.trim();
+  if (!t) return false;
+
+  // 文字・数字（日本語含む）があればNG
+  if (/[A-Za-z0-9\u3040-\u30FF\u3400-\u9FFF]/.test(t)) return false;
+
+  // 区切りとして許可する記号だけ
+  const allowedSymbols = /^[●◆■◇□▲▼＊*]+$/;
+  return allowedSymbols.test(t);
+};
+
+  const flush = () => {
+    const chunk = buffer.join('\n').trim();
+    if (chunk) parts.push(chunk);
+    buffer = [];
+  };
+
+  for (const line of lines) {
+    if (isSymbolOnlyLine(line)) {
+      flush();
+      if (keepDelimiter) {
+        parts.push(line.trim());
+      }
+    } else {
+      buffer.push(line);
+    }
+  }
+
+  flush();
+  return parts;
+}
+
+</script>
+</body>
+
+<!-- 画面右下に浮くボタン群（オプション） -->
+<div id="scrollButtons">
+  <button onclick="selectAllParts()" title="全選択">🔛️</button>
+  <button onclick="deselectAllParts()" title="全解除">🔙</button>
+  <button onclick="scrollToTop()" title="トップへ戻る">🔝</button>
+  <button onclick="scrollToBottom()" title="一番下へ">🔚</button>
+</div>
+
+<div id="leftToast"></div>
+
+<div style="height: 100px;"></div>
+</html>
