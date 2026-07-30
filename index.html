@@ -1771,10 +1771,6 @@ function createPartItem(partData, options = {}) {
     navigator.clipboard.writeText(partBox.value).then(() => {
       copyBtn.textContent = "🌙コピー完了";
       copyBtn.classList.add("copied");
-      setTimeout(() => {
-        copyBtn.textContent = "🌟️コピーする";
-        copyBtn.classList.remove("copied");
-      }, 1400);
     }).catch(err => console.error("コピー失敗:", err));
   });
   actions.appendChild(copyBtn);
