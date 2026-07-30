@@ -2549,8 +2549,6 @@ function addKeepImportBox(text = "") {
     const lastBox = boxes[boxes.length - 1];
     if (lastBox) {
       lastBox.scrollIntoView({ behavior: "smooth", block: "center" });
-      const area = lastBox.querySelector(".keep-import-text");
-      setTimeout(() => area?.focus(), 300);
     }
   });
 
