@@ -575,6 +575,15 @@
       display: block;
       line-height: 1.5;
     }
+    /* 見出しの🌼に仕込んだ隠しボタン（元入力欄の目隠し） */
+    .secret-flower {
+      cursor: default;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+
     /* ミックス文字数ラベルのスタイル（キーボード出ない仕様） */
     .mix-clear-label {
       cursor: pointer;
@@ -1116,13 +1125,12 @@
     <div id="modeDescription">📏文字数モード：文字数で指定した長さごとに分割します</div>
     <span style="white-space: nowrap;"><label>🔠分割文字数：</label><input type="number" id="splitLength" value="4000" style="width:100px;"></span>
     <button onclick="splitText()" class="split-button">✂️分割する</button>
-    <button type="button" id="toggleLongTextBtn" onclick="toggleLongTextVisibility()" title="元入力欄を隠す" aria-label="元入力欄を隠す" aria-expanded="true" style="padding-left: 12px; padding-right: 12px;">🌼</button>
     <div id="totalStats">📋トータル：0文字・0行</div>
     <div id="countStatus">📝️パーツ数：0/0</div>
     <div id="resultArea" style="margin-top: 30px;"></div>
 
     <hr>
-    <h3 style="font-size: 1.2rem; color: #3366cc; background: #eef5ff; padding: 8px 14px; border-left: 6px solid #66aaff; border-radius: 6px; margin-top: 12px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(51, 102, 204, 0.15);">🌼ミックスエリア</h3>
+    <h3 style="font-size: 1.2rem; color: #3366cc; background: #eef5ff; padding: 8px 14px; border-left: 6px solid #66aaff; border-radius: 6px; margin-top: 12px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(51, 102, 204, 0.15);"><span id="toggleLongTextBtn" class="secret-flower" role="button" tabindex="0" onclick="toggleLongTextVisibility()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleLongTextVisibility();}" aria-label="元入力欄を隠す" aria-expanded="true">🌼</span>ミックスエリア</h3>
     <div id="mixDescription">選んだパーツを結合して出力します</div><br>
     <div style="margin-top:10px;">
       <label class="mix-clear-label" onclick="clearMixMaxLength()">🔢ミックス文字数：</label>
@@ -1263,8 +1271,7 @@ function toggleLongTextVisibility() {
   const willHide = area.style.display !== "none";
   area.style.display = willHide ? "none" : "";
   btn.textContent = willHide ? "🏵️" : "🌼";
-  btn.title = willHide ? "元入力欄を表示する" : "元入力欄を隠す";
-  btn.setAttribute("aria-label", btn.title);
+  btn.setAttribute("aria-label", willHide ? "元入力欄を表示する" : "元入力欄を隠す");
   btn.setAttribute("aria-expanded", willHide ? "false" : "true");
 }
 
